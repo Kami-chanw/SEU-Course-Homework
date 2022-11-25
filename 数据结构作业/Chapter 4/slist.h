@@ -5,7 +5,7 @@
 template <class Tp>
 class ForwardList {
     using Self = ForwardList;
-    using node = NodeBase;
+    using node = ListNode<Tp>;
     using link_type = node*;
 
 public:
