@@ -13,9 +13,9 @@ namespace rng = ranges;
         SUM += chrono::duration_cast<decltype(SUM)>(end - start); \
     } while (0)  // 语言顶针：鉴定为c-lang糟粕
 
-template <class Tp>
-void fn(adjacency_list<Tp>& g, const vector<pair<Tp, Tp>>& edges) {
-    rng::for_each(edges, [&](const auto& e) { g.add_directed_edge(e.first, e.second); });
+template <class Tp, class Tag>
+void fn(adjacency_list<Tp, Tag>& g, const vector<pair<Tp, Tp>>& edges) {
+    rng::for_each(edges, [&](const auto& e) { g.add_edge(e.first, e.second); });
 }
 
 int main() {
@@ -29,7 +29,7 @@ int main() {
         chrono::duration<double, micro> time{};
         while (edges.size() < i)
             edges.emplace_back(dis(mt), dis(mt));
-        adjacency_list<char> g;
+        adjacency_list<char, Directed> g;
 
         COUNT_TIME(fn(g, edges), time);
 

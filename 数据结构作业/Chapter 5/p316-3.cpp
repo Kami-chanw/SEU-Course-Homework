@@ -42,13 +42,12 @@ public:
         }
         else {
             parent[j] = i;
-            parent[j] = temp;
+            parent[i] = temp;
         }
     }
     int CollapsingFind(int i) {
         int r;
-        for (r = i; parent[r] >= 0; r = parent[r])
-            ;
+        for (r = i; parent[r] >= 0; r = parent[r]);
         while (i != r) {
             int s     = parent[i];
             parent[i] = r;
