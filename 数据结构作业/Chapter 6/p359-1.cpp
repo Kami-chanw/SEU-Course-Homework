@@ -23,13 +23,14 @@ public:
         return parent[i] = find(parent[i]);
     }
 };
+
 template <class Tp, class Tag>
 typename adjacency_list<Tp, Tag>::weight_type adjacency_list<Tp, Tag>::Kruskal(adjacency_list& tree) {
     priority_queue<edge_tuple, deque<edge_tuple>, greater<>> edges;
 
-    for (auto& [v, i] : index_map)
-        for (const edge& e : vertices[i])
-            edges.emplace(v, e.vertex, e.weight);
+    for (auto& header : vertices)
+        for (const auto& e : header.edges)
+            edges.emplace(header.vertex.value, e.vertex.value, e.weight);
 
     disjoint_set set(vertices.size());
     weight_type  weight{};

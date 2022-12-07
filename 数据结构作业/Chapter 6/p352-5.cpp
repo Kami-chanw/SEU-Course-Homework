@@ -1,19 +1,19 @@
 #include "adjacency_list.h"
 #include <algorithm>
-#include <ranges>
 #include <queue>
+#include <ranges>
 using namespace std;
 namespace rng = ranges;
 
 template <class Tp, class Tag>
-std::vector<typename adjacency_list<Tp, Tag>::vertex_type> adjacency_list<Tp, Tag>::bfs(const_reference vertex_a,
-    const_reference vertex_b) {
-    if (index_map.count(vertex_a) + index_map.count(vertex_b) < 2)
+std::vector<typename adjacency_list<Tp, Tag>::value_type> adjacency_list<Tp, Tag>::bfs(const_reference vertex_a,
+                                                                                       const_reference vertex_b) {
+    if (!index_map.contains(vertex_a) || !index_map.contains(vertex_b))
         return {};
 
     std::queue<pair<vertex_type, int>> q;
     std::vector<bool>                  visited(vertices.size(), false);
-    std::vector<vertex_type>           parent(vertices.size());
+    std::vector<value_type>            parent(vertices.size());
     q.emplace(vertex_a, 0);
     visited[index_map[vertex_a]] = true;
 
@@ -22,23 +22,23 @@ std::vector<typename adjacency_list<Tp, Tag>::vertex_type> adjacency_list<Tp, Ta
         if (vertex == vertex_b)
             break;
         q.pop();
-        for (const auto& v : vertices[index_map[vertex]]) {
-            auto i = index_map[v.vertex];
+        for (const auto& v : vertices[index_map[vertex.value]].edges) {
+            auto i = index_map[v.vertex.value];
             if (!visited[i]) {
                 q.emplace(v.vertex, 1 + path_weight);
-                parent[i] = vertex;
+                parent[i]  = vertex.value;
                 visited[i] = true;
             }
         }
     }
 
-    vector<vertex_type> path;
-    vertex_type         vertex = vertex_b;
+    vector<value_type> path;
+    value_type         vertex = vertex_b;
     path.push_back(vertex_b);
     while (vertex != vertex_a)
         path.push_back(vertex = parent[index_map[vertex]]);
 
-    return rng::to<vector<vertex_type>>(views::reverse(path));
+    return rng::to<vector<value_type>>(views::reverse(path));
 }
 
 int main() {
