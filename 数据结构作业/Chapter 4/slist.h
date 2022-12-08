@@ -37,21 +37,21 @@ public:
 
     template <class Iter, class = std::enable_if_t<std::is_convertible_v<typename std::iterator_traits<Iter>::iterator_category, input_iterator_tag>>>
     void insert(const_iterator position, Iter first, Iter last) {
-        CreateOp c(alloc);
+        CreateOp<Tp> c;
         sz += c.create_from_range(first, last);
         auto [head, tail] = c.get();
         make_link(position.node, head, tail);
     }
     void insert(const_iterator position, std::initializer_list<Tp> l) { insert(position, l.begin(), l.end()); }
     void insert(const_iterator position, size_type n, const_reference value) {
-        CreateOp c(alloc);
+        CreateOp<Tp> c;
         sz += c.create_n(n, value);
         auto [head, tail] = c.get();
         make_link(position.node, head, tail);
     }
     void insert(const_iterator position, const_reference value) { insert(position, 1, value); }
 
-    void erase(const_iterator first, const_iterator last) noexcept { sz -= destroy(CAST(first.node), CAST(break_link(first.node, last.node)), alloc); }
+    void erase(const_iterator first, const_iterator last) noexcept { sz -= destroy(first.node, break_link(first.node, last.node)); }
     void erase(const_iterator position) noexcept { erase(position, std::next(position)); }
 
     size_type remove(const_reference value) noexcept {
@@ -60,12 +60,12 @@ public:
     template <class Pred>
     size_type remove_if(Pred pred) noexcept {
         const size_type oldsz = sz;
-        RemoveOp  op(alloc);
+        RemoveOp<Tp>  op;
         link_type* prev = std::addressof(hd), curr;
         while ((curr = *prev)) {
-            if (pred(VALUE(curr))) {
+            if (pred(curr->value)) {
                 *prev = curr->next;
-                op.push(CAST(curr));
+                op.push(curr);
                 --sz;
             }
             prev = std::addressof(curr->next);
