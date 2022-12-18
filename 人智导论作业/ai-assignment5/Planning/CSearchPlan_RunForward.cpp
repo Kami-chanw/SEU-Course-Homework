@@ -7,11 +7,10 @@
 // 更  新：		2022年10月21日
 // 长  度：		40行
 /////////////////////////////////////////////////////////////////////////////////////////////
-#include "CSearchPlan.h"  //基于搜索的规划类头文件
 #include "stdafx.h"       //MFC标准头文件
-#include <ranges>
+#include "CSearchPlan.h"  //基于搜索的规划类头文件
 #include <algorithm>
-namespace rng = std::ranges;
+#include <ranges>
 
 // 名  称：		RunForward()
 // 功  能：		基于前向搜索的规划
@@ -53,15 +52,21 @@ void CSearchPlan::RunForward() {
     // TODO
     //}
 
-     while (OPEN.size()) {
-         NODE curr = OPEN.front();
-         OPEN.erase(OPEN.begin());  // WTF?? OPEN不应为vector，否则就是依托答辩
-         if (IsStateSmall(curr.state, m_GoalState)) {
-             BackTrack(curr.nID, Tr);
-         }
-         else {
-             if (rng::all_of(curr.state, [&](const STATE::value_type& st) { return CLOSED.count(st.first) == 0; })) {
-             }
-         }
-     }
+    while (OPEN.size()) {
+        NODE curr = OPEN.front();
+        OPEN.erase(OPEN.begin());  // WTF?? OPEN不应为vector，否则就是依托答辩
+        if (IsStateSmall(m_GoalState, curr.state)) {
+            BackTrack(curr.nID, Tr);
+            return;
+        }
+        else {
+            CString idx = GetStateIndex(curr.state);
+            if (CLOSED.find(idx) == CLOSED.end()) {
+                CLOSED.emplace(idx, m_nStateID);
+                if (m_nStateID == 0)
+                    m_nStateID++;
+                Expand(curr, OPEN, CLOSED, Tr);
+            }
+        }
+    }
 }

@@ -51,4 +51,22 @@ void CSearchPlan::RunBackward()
 
 		// TODO
 	//}
+
+	while (OPEN.size()) {
+        NODE curr = OPEN.front();
+        OPEN.erase(OPEN.begin());  // WTF?? OPEN不应为vector，否则就是依托答辩
+        if (IsStateEqual(m_InitState, curr.state)) {
+            BackTrack_Reverse(curr.nID, Tr);
+            return;
+        }
+        else {
+            CString idx = GetStateIndex(curr.state);
+            if (CLOSED.find(idx) == CLOSED.end()) {
+                CLOSED.emplace(idx, m_nStateID);
+                if (m_nStateID == 0)
+                    m_nStateID++;
+                Expand_Reverse(curr, OPEN, CLOSED, Tr);
+            }
+        }
+    }
 }
