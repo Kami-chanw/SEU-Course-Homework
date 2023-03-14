@@ -1,0 +1,43 @@
+<h1 id="introduction">Reverse</h1>
+<p>This project is a simple warm-up to get you used to how this whole project thing will go. It also serves to get you into the mindset of a C programmer. You will write a simple program called <code>reverse</code>. This program should be invoked in one of the following ways:</p>
+<pre class="sh"><code>prompt&gt; ./reverse
+prompt&gt; ./reverse input.txt
+prompt&gt; ./reverse input.txt output.txt</code></pre>
+<p>The above line means the users typed in the name of the reversing program <code>reverse</code> (the <code>./</code> in front of it simply refers to the current working directory (called dot, referred to as <code>.</code>) and the slash (<code>/</code>) is a separator; thus, in this directory, look for a program named <code>reverse</code>) and gave it either no command-line arguments, one command-line argument (an input file, <code>input.txt</code>), or two command-line arguments (an input file and an output file <code>output.txt</code>).</p>
+<p>An input file might look like this:</p>
+<pre><code>hello
+this
+is 
+a file</code></pre>
+<p>The goal of the reversing program is to read in the data from the specified input file and reverse it; thus, the lines should be printed out in the reverse order of the input stream. Thus, for the aforementioned example, the output should be:</p>
+<pre><code>a file
+is
+this
+hello</code></pre>
+<p>The different ways to invoke the file (as above) all correspond to slightly different ways of using this simple new Unix utility. For example, when invoked with two command-line arguments, the program should read from the input file the user supplies and write the reversed version of said file to the output file the user supplies.</p>
+<p>When invoked with just one command-line argument, the user supplies the input file, but the file should be printed to the screen. In Unix-based systems, printing to the screen is the same as writing to a special file known as <strong>standard output</strong>, or <code>stdout</code> for short.</p>
+<p>Finally, when invoked without any arguments, your reversing program should read from <strong>standard input</strong> (<code>stdin</code>), which is the input that a user types in, and write to standard output (i.e., the screen).</p>
+<p>Sounds easy, right? It should. But there are a few details...</p>
+<h1 id="details">Details</h1>
+<h2 id="assumptions-and-errors">Assumptions and Errors</h2>
+<ul>
+<li><p><strong>Input is the same as output:</strong> If the input file and output file are the same file, you should print out an error message <code>reverse: input and output file must differ</code> and exit with return code 1.</p></li>
+<li><p><strong>String length:</strong> You may not assume anything about how long a line should be. Thus, you may have to read in a very long input line...</p></li>
+<li><p><strong>File length:</strong> You may not assume anything about the length of the file, i.e., it may be <strong>VERY</strong> long.</p></li>
+<li><p><strong>Invalid files:</strong> If the user specifies an input file or output file, and for some reason, when you try to open said file (e.g., <code>input.txt</code>) and fail, you should print out the following exact error message <code>reverse: cannot open file 'input.txt'</code> and then exit with return code 1 (i.e., call <code>exit(1);</code>).</p></li>
+<li><p><strong>Malloc fails:</strong> If you call <code>malloc()</code> to allocate some memory, and malloc fails, you should print the error message <code>malloc failed</code> and exit with return code 1.</p></li>
+<li><p><strong>Too many arguments passed to program:</strong> If the user runs <code>reverse</code> with too many arguments, print <code>usage: reverse &lt;input&gt; &lt;output&gt;</code> and exit with return code 1.</p></li>
+<li><p><strong>How to print error messages:</strong> On any error, you should print the error to the screen using <code>fprintf()</code>, and send the error message to <code>stderr</code> (standard error) and not <code>stdout</code> (standard output). This is accomplished in your C code as follows: <code>fprintf(stderr, &quot;whatever the error message is\n&quot;);</code></p></li>
+</ul>
+<h2 id="useful-routines">Useful Routines</h2>
+<p>To exit, call <code>exit(1)</code>. The number you pass to <code>exit()</code>, in this case 1, is then available to the user to see if the program returned an error (i.e., return a non-zero) or exited cleanly (i.e., returned 0).</p>
+<p>For reading in the input file, the following routines will make your life easy: <code>fopen()</code>, <code>getline()</code>, and <code>fclose()</code>.</p>
+<p>For printing (to screen, or to a file), use <code>fprintf()</code>. Note that it is easy to write to standard output by passing <code>stdout</code> to <code>fprintf()</code>; it is also easy to write to a file by passing in the <code>FILE *</code> returned by <code>fopen</code>, e.g., <code>fp=fopen(...); fprintf(fp, ...);</code>.</p>
+<p>The routine <code>malloc()</code> is useful for memory allocation. Perhaps for adding elements to a list?</p>
+<p>If you don't know how to use these functions, use the man pages. For example, typing <code>man malloc</code> at the command line will give you a lot of information on malloc.</p>
+<h2 id="tips">Tips</h2>
+<p><strong>Start small, and get things working incrementally.</strong> For example, first get a program that simply reads in the input file, one line at a time, and prints out what it reads in. Then, slowly add features and test them as you go.</p>
+<p>For example, the way we wrote this code was first to write some code that used <code>fopen()</code>, <code>getline()</code>, and <code>fclose()</code> to read an input file and print it out. Then, we wrote code to store each input line into a linked list and made sure that worked. Then, we printed out the list in reverse order. Then we made sure to handle error cases. And so forth...</p>
+<p><strong>Testing is critical.</strong> A great programmer we once knew said you have to write five to ten lines of test code for every line of code you produce; testing your code to make sure it works is crucial. Write tests to see if your code handles all the cases you think it should. Be as comprehensive as you can be. Of course, when grading your projects, we will be. Thus, it is better if you find your bugs first, before we do.</p>
+<p><strong>Keep old versions around.</strong> Keep copies of older versions of your program around, as you may introduce bugs and not be able to easily undo them. A simple way to do this is to keep copies around, by explicitly making copies of the file at various points during development. For example, let's say you get a simple version of <code>reverse.c</code> working (say, that just reads in the file); type <code>cp reverse.c reverse.v1.c</code> to make a copy into the file <code>reverse.v1.c</code>. More sophisticated developers use version control systems git (perhaps through github); such a tool is well worth learning, so do it!</p>
+

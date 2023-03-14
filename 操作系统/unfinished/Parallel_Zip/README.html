@@ -1,0 +1,26 @@
+<h1 id="parallel-zip">Parallel Zip</h1>
+<p>In an earlier project, you implemented a simple compression tool based on run-length encoding, known simply as <code>zip</code>. Here, you'll implement something similar, except you'll use threads to make a parallel version of <code>zip</code>. We'll call this version <code>pzip</code>.</p>
+<p>There are three specific objectives to this assignment:</p>
+<ul>
+<li>To familiarize yourself with the Linux pthreads.</li>
+<li>To learn how to parallelize a program.</li>
+<li>To learn how to program for high performance.</li>
+</ul>
+<h2 id="overview">Overview</h2>
+<p>First, recall how <code>zip</code> works. You'll use the same basic specification, with run-length encoding as the basic technique.</p>
+<p>Your parallel zip (<code>pzip</code>) will externally look the same; the general usage from the command line will be as follows:</p>
+<pre><code>prompt&gt; ./pzip file &gt; file.z</code></pre>
+<p>As before, there may be many input files (not just one, as above). However, internally, the program will use POSIX threads to parallelize the compression process.</p>
+<h2 id="considerations">Considerations</h2>
+<p>Doing so effectively and with high performance will require you to address (at least) the following issues:</p>
+<ul>
+<li><p><strong>How to parallelize the compression.</strong> Of course, the central challenge of this project is to parallelize the compression process. Think about what can be done in parallel, and what must be done serially by a single thread, and design your parallel zip as appropriate.</p>
+<p>One interesting issue that the &quot;best&quot; implementations will handle is this: what happens if one thread runs more slowly than another? Does the compression give more work to faster threads?</p></li>
+<li><p><strong>How to determine how many threads to create.</strong> On Linux, this means using interfaces like <code>get_nprocs()</code> and <code>get_nprocs_conf()</code>; read the man pages for more details. Then, create threads to match the number of CPU resources available.</p></li>
+<li><p><strong>How to efficiently perform each piece of work.</strong> While parallelization will yield speed up, each thread's efficiency in performing the compression is also of critical importance. Thus, making the core compression loop as CPU efficient as possible is needed for high performance.</p></li>
+<li><p><strong>How to access the input file efficiently.</strong> On Linux, there are many ways to read from a file, including C standard library calls like <code>fread()</code> and raw system calls like <code>read()</code>. One particularly efficient way is to use memory-mapped files, available via <code>mmap()</code>. By mapping the input file into the address space, you can then access bytes of the input file via pointers and do so quite efficiently.</p></li>
+</ul>
+<h2 id="grading">Grading</h2>
+<p>Your code should compile (and should be compiled) with the following flags: <code>-Wall -Werror -pthread -O</code>. The last one is important: it turns on the optimizer! In fact, for fun, try timing your code with and without <code>-O</code> and marvel at the difference.</p>
+<p>Your code will first be measured for correctness, ensuring that it zips input files correctly.</p>
+<p>If you pass the correctness tests, your code will be tested for performance; higher performance will lead to better scores.</p>

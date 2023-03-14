@@ -1,0 +1,45 @@
+<h1 id="intro-to-kernel-hacking">Intro To Kernel Hacking</h1>
+<p>To develop a better sense of how an operating system works, you will also do a few projects <em>inside</em> a real OS kernel. The kernel we'll be using is a port of the original Unix (version 6), and is runnable on modern x86 processors. It was developed at MIT and is a small and relatively understandable OS and thus an excellent focus for simple projects.</p>
+<p>This first project is just a warmup, and thus relatively light on work. The goal of the project is simple: to add a system call to xv6. Your system call, <strong>getreadcount()</strong>, simply returns how many times that the <strong>read()</strong> system call has been called by user processes since the time that the kernel was booted.</p>
+<h2 id="your-system-call">Your System Call</h2>
+<p>Your new system call should look have the following return codes and parameters:</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span> getreadcount(<span class="dt">void</span>)</code></pre>
+<p>Your system call returns the value of a counter (perhaps called <strong>readcount</strong> or something like that) which is incremented every time any process calls the <strong>read()</strong> system call. That's it!</p>
+<h2 id="tips">Tips</h2>
+<p>Before hacking xv6, you need to succesfully unpack it, build it, and then modify it to make this project successful. Xv6+Qemu is strongly recommended, you can get start by following this small guide:
+  <ol>
+    <li>Get the latest xv6 source.
+    <pre class="sh"><code>prompt&gt; git clone git://github.com/mit-pdos/xv6-public.git</code></pre></li>
+    <li>Test your compiler toolchain.
+      <pre class="sh"><code>prompt&gt; objdump -i</code></pre>
+      The second line should say elf32-i386.
+      <pre class="sh"><code>prompt&gt; gcc -m32 -print-libgcc-file-name</code></pre>
+      The command should print something like /usr/lib/gcc/i486-linux-gnu/version/libgcc.a or /usr/lib/gcc/x86_64-linux-gnu/version/32/libgcc.a</li>
+      If both these commands succeed, you're all set, and don't need to compile your own toolchain. Otherwise, <a href="https://pdos.csail.mit.edu/6.828/2018/tools.html">trouble shooting</a>.
+    <li>Compile xv6.
+      <pre class="sh"><code>prompt&gt; ./Xv6-master/make</code></pre></li>
+    <li>Install qemu.
+      <pre class="sh"><code>prompt&gt; sudo apt-get install qemu</code></pre></li>
+    <li>Run xv6.
+      <pre class="sh"><code>prompt&gt; ./Xv6-master/make qemu</code></pre>
+    </li>
+    If success, you can run <strong>ls</strong> to see all command files.
+  </ol></p>
+
+
+<p>You might want to read background.html first. More information about xv6, including a very useful book written by the MIT folks who built xv6, is available <a href="https://pdos.csail.mit.edu/6.828/2017/xv6.html">here</a>.</p>
+<p>One good way to start hacking inside a large code base is to find something similar to what you want to do and to carefully copy/modify that. Here, you should find some other system call, like <strong>getpid()</strong> (or any other simple call). Copy it in all the ways you think are needed, and then modify it to do what you need.</p>
+<p>Most of the time will be spent on understanding the code. There shouldn't be a whole lot of code added.</p>
+<p>Using gdb (the debugger) may be helpful in understanding code, doing code traces, and is helpful for later projects too. Get familiar with this fine tool!</p>
+<h1 id="running-tests">Running Tests</h1>
+<p>Before running tests, get tcl, tk, expect installed in your working operating system:</p>
+<pre class="sh"><code>prompt&gt; sudo apt-get install tcl tk expect</code></pre>
+<p>Running tests for your system call is easy. Just do the following from inside the <code>initial-xv6</code> directory:</p>
+<pre class="sh"><code>prompt&gt; ./test-getreadcounts.sh</code></pre>
+<p>If you implemented things correctly, you should get some notification that the tests passed. If not ...</p>
+<p>The tests assume that xv6 source code is found in the <code>src/</code> subdirectory. If it's not there, the script will complain.</p>
+<p>The test script does a one-time clean build of your xv6 source code using a newly generated makefile called <code>Makefile.test</code>. You can use this when debugging (assuming you ever make mistakes, that is), e.g.:</p>
+<pre class="sh"><code>prompt&gt; cd src/
+prompt&gt; make -f Makefile.test qemu-nox</code></pre>
+<p>You can suppress the repeated building of xv6 in the tests with the <code>-s</code> flag. This should make repeated testing faster:</p>
+<pre class="sh"><code>prompt&gt; ./test-getreadcounts.sh -s</code></pre>

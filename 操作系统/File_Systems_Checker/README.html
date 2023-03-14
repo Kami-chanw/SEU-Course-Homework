@@ -1,0 +1,34 @@
+<h1 id="file-system-checking">File System Checking</h1>
+<p>In this assignment, you will be developing a working file system checker. A checker reads in a file system image and makes sure that it is consistent. When it isn't, the checker takes steps to repair the problems it sees; however, you won't be doing any repairs to keep this project a little simpler.</p>
+<h2 id="a-basic-checker">A Basic Checker</h2>
+<p>For this project, you will use the xv6 file system image as the basic image that you will be reading and checking. The file <code>include/fs.h</code> includes the basic structures you need to understand, including the superblock, on disk inode format (<code>struct dinode</code>), and directory entry format (<code>struct dirent</code>). The tool <code>tools/mkfs.c</code> will also be useful to look at, in order to see how an empty file-system image is created.</p>
+<p>Much of this project will be puzzling out the exact on-disk format xv6 uses for its simple file system, and then writing checks to see if various parts of that structure are consistent. Thus, reading through <code>mkfs.c</code> and the file system code itself will help you understand how xv6 uses the bits in the image to record persistent information.</p>
+<p>Your checker should read through the file system image and determine the consistency of a number of things, including the following. When a problem is detected, print the error message (shown below) to <strong>standard error</strong> and exit immediately with <strong>exit code 1</strong> (i.e., call <code>exit(1)</code>).</p>
+<ol style="list-style-type: decimal">
+<li><p>Each inode is either unallocated or one of the valid types (<code>T_FILE</code>, <code>T_DIR</code>, <code>T_DEV</code>). If not, print <code>ERROR: bad inode.</code></p></li>
+<li><p>For in-use inodes, each address that is used by inode is valid (points to a valid datablock address within the image). If the direct block is used and is invalid, print <code>ERROR: bad direct address in inode.</code>; if the indirect block is in use and is invalid, print <code>ERROR: bad indirect address in inode.</code></p></li>
+<li><p>Root directory exists, its inode number is 1, and the parent of the root directory is itself. If not, print <code>ERROR: root directory does not exist.</code></p></li>
+<li><p>Each directory contains <code>.</code> and <code>..</code> entries, and the <code>.</code> entry points to the directory itself. If not, print <code>ERROR: directory not properly formatted.</code></p></li>
+<li><p>For in-use inodes, each address in use is also marked in use in the bitmap. If not, print <code>ERROR: address used by inode but marked free in bitmap.</code></p></li>
+<li><p>For blocks marked in-use in bitmap, the block should actually be in-use in an inode or indirect block somewhere. If not, print <code>ERROR: bitmap marks block in use but it is not in use.</code></p></li>
+<li><p>For in-use inodes, each direct address in use is only used once. If not, print <code>ERROR: direct address used more than once.</code></p></li>
+<li><p>For in-use inodes, each indirect address in use is only used once. If not, print <code>ERROR: indirect address used more than once.</code></p></li>
+<li><p>For all inodes marked in use, each must be referred to in at least one directory. If not, print <code>ERROR: inode marked use but not found in a directory.</code></p></li>
+<li><p>For each inode number that is referred to in a valid directory, it is actually marked in use. If not, print <code>ERROR: inode referred to in directory but marked free.</code></p></li>
+<li><p>Reference counts (number of links) for regular files match the number of times file is referred to in directories (i.e., hard links work correctly). If not, print <code>ERROR: bad reference count for file.</code></p></li>
+<li><p>No extra links allowed for directories (each directory only appears in one other directory). If not, print <code>ERROR: directory appears more than once in file system.</code></p></li>
+</ol>
+<h2 id="other-specifications">Other Specifications</h2>
+<p>Your checker program, called <code>xcheck</code>, must be invoked exactly as follows:</p>
+<pre><code>prompt&gt; xcheck file_system_image</code></pre>
+<p>The image file is a file that contains the file system image. If no image file is provided, you should print the usage error shown below:</p>
+<pre><code>prompt&gt; xcheck 
+Usage: xcheck &lt;file_system_image&gt; </code></pre>
+<p>This output must be printed to standard error and exit with the error code of 1.</p>
+<p>If the file system image does not exist, you should print the error <code>image not found.</code> to standard error and exit with the error code of 1.</p>
+<p>If the checker detects any one of the 12 errors above, it should print the specific error to standard error and exit with error code 1.</p>
+<p>If the checker detects none of the problems listed above, it should exit with return code of 0 and not print anything.</p>
+<h2 id="hints">Hints</h2>
+<p>It may be worth looking into using <code>mmap()</code> for the project. Like, seriously, use <code>mmap()</code> to access the file-system image, it will make your life so much better.</p>
+<p>It should be very helpful to read Chapter 6 of the xv6 book <a href="https://pdos.csail.mit.edu/6.828/2014/xv6/book-rev8.pdf">here</a>. Note that the version of xv6 we're using does not include the logging feature described in the book; you can safely ignore the parts that pertain to that.</p>
+<p>Make sure to look at <code>fs.img</code>, which is a file system image created when you make xv6 by the tool mkfs (found in the <code>tools/</code> directory of xv6). The output of this tool is the file <code>fs.img</code> and it is a consistent file-system image. The tests, of course, will put inconsistencies into this image, but your tool should work over a consistent image as well. Study <code>mkfs</code> and its output to begin to make progress on this project.</p>

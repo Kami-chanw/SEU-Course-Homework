@@ -1,0 +1,237 @@
+<h1 id="xv6-system-call-background">xv6 System Call Background</h1>
+<p>To be able to implement this project, you'll have to understand a little bit about how xv6 implements system calls. A  system call is a protected transfer of control from an application (running in <em>user mode</em>) to the OS (running in <em>kernel mode</em>). The general approach enables the kernel to maintain control of the machine while generally letting user applications run efficiently and without kernel intervention.</p>
+<p>We'll specifically trace what happens in the code in order to understand a <em>system call</em>. System calls allow the operating system to run code on the behalf of user requests but in a protected manner, both by jumping into the kernel (in a very specific and restricted way) and also by simultaneously raising the privilege level of the hardware, so that the OS can perform certain restricted operations.</p>
+<h2 id="system-call-overview">System Call Overview</h2>
+<p>Before delving into the details, we first provide an overview of the entire process. The problem we are trying to solve is simple: how can we build a system such that the OS is allowed access to all of the resources of the machine (including access to special instructions, to physical memory, and to any devices) while user programs are only able to do so in a restricted manner?</p>
+<p>The way we achieve this goal is with hardware support. The hardware must explicitly have a notion of privilege built into it, and thus be able to distinguish when the OS is running versus typical user applications.</p>
+<h2 id="getting-into-the-kernel-a-trap">Getting Into The Kernel: A Trap</h2>
+<p>The first step in a system call begins at user-level with an application. The application that wishes to make a system call (such as <strong>read()</strong>) calls the relevant library routine. However, all the library version of the system call does is to place the proper arguments in relevant registers and issue some kind of <strong>trap</strong> instruction, as we see in an expanded version of <strong>usys.S</strong> (Some macros are used to define these functions so as to make life easier for the kernel developer; the example shows the macro expanded to the actual assembly code).</p>
+<pre><code>.globl read; 
+read: 
+  movl $6, %eax; 
+  int $64; 
+  ret</code></pre>
+<p>File: <strong>usys.S</strong></p>
+<p>Here we can see that the <strong>read()</strong> library function actually doesn't do much at all; it moves the value 5 into the register <strong>%eax</strong> and issues the x86 trap instruction which is confusingly called <strong>int</strong> (short for <em>interrupt</em>). The value in <strong>%eax</strong> is going to be used by the kernel to <em>vector</em> to the right system call, i.e., it determines which system call is being invoked. The <strong>int</strong> instruction takes one argument (here it is 64), which tells the hardware which trap type this is. In xv6, trap 64 is used to handle system calls. Any other arguments which are passed to the system call are passed on the stack.</p>
+<h2 id="kernel-side-trap-tables">Kernel Side: Trap Tables</h2>
+<p>Once the <strong>int</strong> instruction is executed, the hardware takes over and does a bunch of work on behalf of the caller. One important thing the hardware does is to raise the <em>privilege level</em> of the CPU to kernel mode; on x86 this is usually means moving from a <em>CPL</em> <em>(Current Privilege Level)</em> of 3 (the level at which user applications run) to CPL 0 (in which the kernel runs). Yes, there are a couple of in-between privilege levels, but most systems do not make use of these.</p>
+<p>The second important thing the hardware does is to transfer control to the <em>trap vectors</em> of the system. To enable the hardware to know what code to run when a particular trap occurs, the OS, when booting, must make sure to inform the hardware of the location of the code to run when such traps take place. This is done in <strong>main.c</strong> as follows:</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">int</span>
+mainc(<span class="dt">void</span>)
+{
+   ...
+   tvinit(); <span class="co">// trap vectors initialized here</span>
+   ...
+}</code></pre>
+<p>FILE: <strong>main.c</strong></p>
+<p>The routine <strong>tvinit()</strong> is the relevant one here. Peeking inside of it, we see:</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">void</span> tvinit(<span class="dt">void</span>)
+{
+  <span class="dt">int</span> i;
+
+  <span class="kw">for</span>(i = <span class="dv">0</span>; i &lt; <span class="dv">256</span>; i++)
+    SETGATE(idt[i], <span class="dv">0</span>, SEG_KCODE&lt;&lt;<span class="dv">3</span>, vectors[i], <span class="dv">0</span>);
+
+  <span class="co">// this is the line we care about...</span>
+  SETGATE(idt[T_SYSCALL], <span class="dv">1</span>, SEG_KCODE&lt;&lt;<span class="dv">3</span>, vectors[T_SYSCALL], DPL_USER);
+
+  initlock(&amp;tickslock, <span class="st">&quot;time&quot;</span>);
+}</code></pre>
+<p>FILE: <strong>trap.c</strong></p>
+<p>The <strong>SETGATE()</strong> macro is the relevant code here. It is used to set the <strong>idt</strong> array to point to the proper code to execute when various traps and interrupts occur. For system calls, the single <strong>SETGATE()</strong> call (which comes after the loop) is the one we're interested in. Here is what the macro does (as well as the gate descriptor it sets):</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="co">// Interrupt descriptor table (shared by all CPUs).</span>
+<span class="kw">struct</span> gatedesc idt[256];
+...
+
+<span class="co">// Gate descriptors for interrupts and traps</span>
+<span class="kw">struct</span> gatedesc {
+  uint off_15_0 : <span class="dv">16</span>;   <span class="co">// low 16 bits of offset in segment</span>
+  uint cs : <span class="dv">16</span>;         <span class="co">// code segment selector</span>
+  uint args : <span class="dv">5</span>;        <span class="co">// # args, 0 for interrupt/trap gates</span>
+  uint rsv1 : <span class="dv">3</span>;        <span class="co">// reserved(should be zero I guess)</span>
+  uint type : <span class="dv">4</span>;        <span class="co">// type(STS_{TG,IG32,TG32})</span>
+  uint s : <span class="dv">1</span>;           <span class="co">// must be 0 (system)</span>
+  uint dpl : <span class="dv">2</span>;         <span class="co">// descriptor(meaning new) privilege level</span>
+  uint p : <span class="dv">1</span>;           <span class="co">// Present</span>
+  uint off_31_16 : <span class="dv">16</span>;  <span class="co">// high bits of offset in segment</span>
+};
+
+<span class="co">// Set up a normal interrupt/trap gate descriptor.</span>
+<span class="co">// - istrap: 1 for a trap (= exception) gate, 0 for an interrupt gate.</span>
+<span class="co">//   interrupt gate clears FL_IF, trap gate leaves FL_IF alone</span>
+<span class="co">// - sel: Code segment selector for interrupt/trap handler</span>
+<span class="co">// - off: Offset in code segment for interrupt/trap handler</span>
+<span class="co">// - dpl: Descriptor Privilege Level -</span>
+<span class="co">//        the privilege level required for software to invoke</span>
+<span class="co">//        this interrupt/trap gate explicitly using an int instruction.</span>
+<span class="ot">#define SETGATE(gate, istrap, sel, off, d)                \</span>
+{                                                         \
+  (gate).off_15_0 = (uint) (off) &amp; <span class="bn">0xffff</span>;                \
+  (gate).cs = (sel);                                      \
+  (gate).args = <span class="dv">0</span>;                                        \
+  (gate).rsv1 = <span class="dv">0</span>;                                        \
+  (gate).type = (istrap) ? STS_TG32 : STS_IG32;           \
+  (gate).s = <span class="dv">0</span>;                                           \
+  (gate).dpl = (d);                                       \
+  (gate).p = <span class="dv">1</span>;                                           \
+  (gate).off_31_16 = (uint) (off) &gt;&gt; <span class="dv">16</span>;                  \
+}</code></pre>
+<p>FILE: <strong>mmu.h</strong></p>
+<p>As you can see from the code, all the <strong>SETGATE()</strong> macros does is set the values of an in-memory data structure. Most important is the <strong>off</strong> parameter, which tells the hardware where the trap handling code is. In the initialization code, the value <strong>vectors[T_SYSCALL]</strong> is passed in; thus, whatever the <strong>vectors</strong> array points to will be the code to run when a system call takes place. There are other details (which are important too); consult an <a href="http://www.intel.com/products/processor/manuals">x86 hardware architecture manuals</a> (particularly Chapters 3a and 3b) for more information.</p>
+<p>Note, however, that we still have not informed the hardware of this information, but rather filled a data structure. The actual hardware informing occurs a little later in the boot sequence; in xv6, it happens in the routine <strong>mpmain()</strong> in the file <strong>main.c</strong>, which calls <strong>idtinit</strong> in <strong>trap.c</strong>, which calls <strong>lidt()</strong> in the include file <strong>x86.h</strong>:</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">static</span> <span class="dt">void</span>
+mpmain(<span class="dt">void</span>)
+{
+  idtinit();
+  ...
+
+<span class="dt">void</span>
+idtinit(<span class="dt">void</span>)
+{
+  lidt(idt, <span class="kw">sizeof</span>(idt));
+}
+
+<span class="dt">static</span> <span class="kw">inline</span> <span class="dt">void</span>
+lidt(<span class="kw">struct</span> gatedesc *p, <span class="dt">int</span> size)
+{
+  <span class="dt">volatile</span> ushort pd[<span class="dv">3</span>];
+
+  pd[<span class="dv">0</span>] = size<span class="dv">-1</span>;
+  pd[<span class="dv">1</span>] = (uint)p;
+  pd[<span class="dv">2</span>] = (uint)p &gt;&gt; <span class="dv">16</span>;
+
+  asm <span class="dt">volatile</span>(<span class="st">&quot;lidt (%0)&quot;</span> : : <span class="st">&quot;r&quot;</span> (pd));
+}</code></pre>
+<p>Here, you can see how (eventually) a single assembly instruction is called to tell the hardware where to find the <em>interrupt descriptor table (IDT)</em> in memory. Note this is done in <strong>mpmain()</strong> as each processor in the system must have such a table (they all use the same one of course). Finally, after executing this instruction (which is only possible when the kernel is running, in privileged mode), we are ready to think about what happens when a user application invokes a system call.</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="kw">struct</span> trapframe {
+  <span class="co">// registers as pushed by pusha</span>
+  uint edi;
+  uint esi;
+  uint ebp;
+  uint oesp;      <span class="co">// useless &amp; ignored</span>
+  uint ebx;
+  uint edx;
+  uint ecx;
+  uint eax;
+
+  <span class="co">// rest of trap frame</span>
+  ushort es;
+  ushort padding1;
+  ushort ds;
+  ushort padding2;
+  uint trapno;
+
+  <span class="co">// below here defined by x86 hardware</span>
+  uint err;
+  uint eip;
+  ushort cs;
+  ushort padding3;
+  uint eflags;
+
+  <span class="co">// below here only when crossing rings, such as from user to kernel</span>
+  uint esp;
+  ushort ss;
+  ushort padding4;
+};</code></pre>
+<p>File: <strong>x86.h</strong></p>
+<h2 id="from-low-level-to-the-c-trap-handler">From Low-level To The C Trap Handler</h2>
+<p>The OS has carefully set up its trap handlers, and thus we are ready to see what happens on the OS side once an application issues a system call via the <strong>int</strong> instruction. Before any code is run, the hardware must perform a number of tasks. The first thing it does are those tasks which are difficult/impossible for the software to do itself, including saving the current PC (IP or EIP in Intel terminology) onto the stack, as well as a number of other registers such as the <strong>eflags</strong> register (which contains the current status of the CPU while the program was running), stack pointer, and so forth. One can see what the hardware is expected to save by looking at the <strong>trapframe</strong> structure as defined in <strong>x86.h</strong>.</p>
+<p>As you can see from the bottom of the trapframe structure, some pieces of the trap frame are filled in by the hardware (up to the <strong>err</strong> field); the rest will be saved by the OS. The first code OS that is run is <strong>vector64()</strong> as found in <strong>vectors.S</strong> (which is automatically generated by the script <strong>vectors.pl</strong>).</p>
+<pre class="sourceCode c"><code class="sourceCode c">.globl vector64
+vector64:
+  pushl $<span class="dv">64</span>
+  jmp alltraps</code></pre>
+<p>File: <strong>vectors.S</strong> (generated by <strong>vectors.pl</strong>)</p>
+<p>This code pushes the trap number onto the stack (filling in the <strong>trapno</strong> field of the trap frame) and then calls <strong>alltraps()</strong> to do most of the saving of context into the trap frame.</p>
+<pre><code>  # vectors.S sends all traps here.
+.globl alltraps
+alltraps:
+  # Build trap frame.
+  pushl %ds
+  pushl %es
+  pushal
+
+  # Set up data segments.
+  movl $SEG_KDATA_SEL, %eax
+  movw %ax,%ds
+  movw %ax,%es
+
+  # Call trap(tf), where tf=%esp
+  pushl %esp
+  call trap
+  addl $4, %esp</code></pre>
+<p>File: <strong>trapasm.S</strong></p>
+<p>The code in <strong>alltraps()</strong> pushes a few more segment registers (not described here, yet) onto the stack before pushing the remaining general purpose registers onto the trap frame via a <strong>pushal</strong> instruction. Then, the OS changes the descriptor segment and extra segment registers so that it can access its own (kernel) memory. Finally, the C trap handler is called.</p>
+<h2 id="the-c-trap-handler">The C Trap Handler</h2>
+<p>Once done with the low-level details of setting up the trap frame, the low-level assembly code calls up into a generic C trap handler called <strong>trap()</strong>, which is passed a pointer to the trap frame. This trap handler is called upon all types of interrupts and traps, and thus check the trap number field of the trap frame (<strong>trapno</strong>) to determine what to do. The first check is for the system call trap number (<strong>T_SYSCALL</strong>, or 64 as defined somewhat arbitrarily in <strong>traps.h</strong>), which then handles the system call, as you see here:</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">void</span>
+trap(<span class="kw">struct</span> trapframe *tf)
+{
+  <span class="kw">if</span>(tf-&gt;trapno == T_SYSCALL){
+    <span class="kw">if</span>(cp-&gt;killed)
+      exit();
+    cp-&gt;tf = tf;
+    syscall();
+    <span class="kw">if</span>(cp-&gt;killed)
+      exit();
+    <span class="kw">return</span>;
+  }
+  ... <span class="co">// continues</span>
+}  </code></pre>
+<p>FILE: <strong>trap.c</strong></p>
+<p>The code isn't too complicated. It checks if the current process (that made the system call) has been killed; if so, it simply exits and cleans up the process (and thus does not proceed with the system call). It then calls <strong>syscall()</strong> to actually perform the system call; more details on that below. Finally, it checks whether the process has been killed again before returning. Note that we'll follow the return path below in more detail.</p>
+<pre class="sourceCode c"><code class="sourceCode c"><span class="dt">static</span> <span class="dt">int</span> (*syscalls[])(<span class="dt">void</span>) = {
+[SYS_chdir]   sys_chdir,
+[SYS_close]   sys_close,
+[SYS_dup]     sys_dup,
+[SYS_exec]    sys_exec,
+[SYS_exit]    sys_exit,
+[SYS_fork]    sys_fork,
+[SYS_fstat]   sys_fstat,
+[SYS_getpid]  sys_getpid,
+[SYS_kill]    sys_kill,
+[SYS_link]    sys_link,
+[SYS_mkdir]   sys_mkdir,
+[SYS_mknod]   sys_mknod,
+[SYS_open]    sys_open,
+[SYS_pipe]    sys_pipe,
+[SYS_read]    sys_read,
+[SYS_sbrk]    sys_sbrk,
+[SYS_sleep]   sys_sleep,
+[SYS_unlink]  sys_unlink,
+[SYS_wait]    sys_wait,
+[SYS_write]   sys_write,
+};
+
+<span class="dt">void</span>
+syscall(<span class="dt">void</span>)
+{
+  <span class="dt">int</span> num;
+  
+  num = cp-&gt;tf-&gt;eax;
+  <span class="kw">if</span>(num &gt;= <span class="dv">0</span> &amp;&amp; num &lt; NELEM(syscalls) &amp;&amp; syscalls[num])
+    cp-&gt;tf-&gt;eax = syscalls[num]();
+  <span class="kw">else</span> {
+    cprintf(<span class="st">&quot;%d %s: unknown sys call %d</span><span class="ch">\n</span><span class="st">&quot;</span>, 
+        cp-&gt;pid, cp-&gt;name, num);
+    cp-&gt;tf-&gt;eax = -<span class="dv">1</span>;
+  }
+}
+]</code></pre>
+<p>File: <strong>syscall.c</strong></p>
+<h2 id="vectoring-to-the-system-call">Vectoring To The System Call</h2>
+<p>Once we finally get to the <strong>syscall()</strong> routine in <strong>syscall.c</strong>, not much work is left to do (see above). The system call number has been passed to us in the register <strong>%eax</strong>, and now we unpack that number from the trap frame and use it to call the appropriate routine as defined in the system call table <strong>syscalls[]</strong>. Pretty much all operating systems have a table similar to this to define the various system calls they support. After carefully checking that the system call number is in bounds, the pointed-to routine is called to handle the call. For example, if the system call <strong>read()</strong> was called by the user, the routine <strong>sys_read()</strong> will be invoked here. The return value, you might note, is stored in <strong>%eax</strong> to pass back to the user.</p>
+<h2 id="the-return-path">The Return Path</h2>
+<p>The return path is pretty easy. First, the system call returns an integer value, which the code in <strong>syscall()</strong> grabs and places into the <strong>%eax</strong> field of the trap frame. The code then returns into <strong>trap()</strong>, which simply returns into where it was called from in the assembly trap handler.</p>
+<pre class="sourceCode c"><code class="sourceCode c">  <span class="er"># Return falls through to trapret...</span>
+.globl trapret
+trapret:
+  popal
+  popl %es
+  popl %ds
+  addl $<span class="bn">0x8</span>, %esp  # trapno and errcode
+  iret</code></pre>
+<p>File: <strong>trapasm.S</strong></p>
+<p>This return code doesn't do too much, just making sure to pop the relevant values off the stack to restore the context of the running process. Finally, one more special instruction is called: <strong>iret</strong>, or the <strong>return-from-trap</strong> instruction. This instruction is similar to a return from a procedure call, but simultaneously lowers the privilege level back to user mode and jumps back to the instruction immediately following the <strong>int</strong> instruction called to invoke the system call, restoring all the state that has been saved into the trap frame. At this point, the user stub for <strong>read()</strong> (as seen in the <strong>usys.S</strong> code) is run again, which just uses a normal return-from-procedure-call instruction (<strong>ret</strong>) in order to return to the caller.</p>
+<h2 id="summary">Summary</h2>
+<p>We have seen the path in and out of the kernel on a system call. As you can tell, it is much more complex than a simple procedure call, and requires a careful protocol on behalf of the OS and hardware to ensure that application state is properly saved and restored on entry and return. As always, the concept is easy: with operating systems, the devil is always in the details.</p>
