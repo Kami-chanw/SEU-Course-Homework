@@ -8,21 +8,28 @@ public:
     IntegerSet() { emptySet(); }
 
     IntegerSet(int arr[], int size) : IntegerSet() {
-        for_each_n(arr, size, [this](const int x) { insertElement(x); });
+        for_each_n(arr, size, [this](const int x) {
+            if (validEntry(x))
+                insertElement(x);
+            else
+                cout << "Invalid insert attempted!" << endl;
+        });
     }
 
     void emptySet() { fill_n(set, 101, 0); }
 
     void inputSet() {
         int num;
-        do {
+        while (true) {
             cout << "Enter an element (-1 to end): ";
             cin >> num;
             if (validEntry(num))
                 insertElement(num);
+            else if (num == -1)
+                break;
             else
                 cout << "Invalid Element" << endl;
-        } while (num != -1);
+        }
         cout << "Entry complete" << endl;
     }
 
@@ -37,14 +44,14 @@ public:
     }
 
     void printSet() const {
-        string res = "(  ";
+        string res = "(   ";
         for (int i = 0; i <= 100; i++)
             if (set[i] == 1)
                 res += to_string(i) + "  ";
         if (res == "(  ")
             cout << "---";
         else
-            cout << res << ")" << endl;
+            cout << res << " )" << endl;
     }
 
     bool isEqualTo(const IntegerSet& other) const { return equal(begin(set), end(set), begin(other.set)); }
@@ -90,5 +97,9 @@ int main() {
     A.deleteElement(77);
     A.printSet();
 
+    int arr[] = { 1, 2, 9, 25, 45, 105, 67, -3, 99, 100 };
+    IntegerSet e(arr, extent<decltype(arr)>::value);
+    cout << "\nSet e is:" << endl;
+    e.printSet();
     return 0;
 }
