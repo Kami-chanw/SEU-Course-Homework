@@ -15,5 +15,5 @@ sudo bash gen-ans.sh
 如果运行测试脚本时提示文件权限不够，请先进入Xv6-Syscall，然后调用以下代码
 ```
 cd ..
-sudo chmod 777 *.sh
+find . -name "*.sh" -exec chmod +x {} \;
 ```
