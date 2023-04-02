@@ -1,18 +1,19 @@
 #include <iomanip>
 #include <iostream>
+
 using namespace std;
 
 class Time {
 public:
     explicit Time() : totalSeconds(0){};
-    void setTime(int h, int m, int s) { totalSeconds = h * 3600 + m * 60 + s; }
-    void setHour(int h) { totalSeconds = totalSeconds % 3600 + h * 3600; }
-    void setMinute(int m) { totalSeconds = totalSeconds % 3600 + m * 60; }
-    void setSecond(int s) { totalSeconds = totalSeconds % 60 + s; }
+    void         setTime(int h, int m, int s) { totalSeconds = h * 3600 + m * 60 + s; }
+    void         setHour(int h) { totalSeconds = (h * 3600) + (totalSeconds % 3600); }
+    void         setMinute(int m) { totalSeconds = (totalSeconds / 3600) * 3600 + (m * 60) + (totalSeconds % 60); }
+    void         setSecond(int s) { totalSeconds = (totalSeconds / 60) * 60 + s; }
     unsigned int getHour() const { return totalSeconds / 3600; }
     unsigned int getMinute() const { return (totalSeconds % 3600) / 60; }
     unsigned int getSecond() const { return totalSeconds % 60; }
-    void printUniversal() const {
+    void         printUniversal() const {
         cout << setfill('0') << setw(2) << getHour() << ":" << setw(2) << getMinute() << ":" << setw(2) << getSecond();
     }
     void printStandard() const {

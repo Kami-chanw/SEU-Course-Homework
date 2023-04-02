@@ -2,3 +2,7 @@
 凸优化/*.docx
 机器学习/作业/*.docx
 数据结构/**/*.zip
+.clang-format
+*.exe
+程序设计/**/*.doc
+**/.vscode/*

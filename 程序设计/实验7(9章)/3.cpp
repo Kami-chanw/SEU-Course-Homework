@@ -2,6 +2,7 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+#include <cstring>
 using namespace std;
 
 class HugeInteger {
@@ -27,12 +28,14 @@ public:
         *this = HugeInteger(str);
     }
     void output() const {
-        int i = std::extent<decltype(digits)>::value
-                - count_if(rbegin(digits), rend(digits), [](const int a) { return !a; });  // compat before c++17
-        if (i == 0)
-            cout << 0;
-        else
-            copy_n(make_reverse_iterator(digits + i), i, ostream_iterator<int>(cout));
+        int i;
+        for (i = 39; i >= 0; --i)
+            if (digits[i]) {
+                for (; i >= 0; --i)
+                    cout << digits[i];
+                return;
+            }
+        cout << 0;
     }
     HugeInteger add(const HugeInteger& other) const {
         HugeInteger res;
@@ -60,10 +63,18 @@ public:
         }
         return res;
     }
-    bool isEqualTo(const HugeInteger& other) const { return equal(begin(digits), end(digits), other.digits); }
+    bool isEqualTo(const HugeInteger& other) const {
+        for (int i = 0; i < 40; ++i)
+            if (digits[i] != other.digits[i])
+                return false;
+        return true;
+    }
     bool isNotEqualTo(const HugeInteger& other) const { return !isEqualTo(other); }
     bool isGreaterThan(const HugeInteger& other) const {
-        return lexicographical_compare(rbegin(digits), rend(digits), rbegin(other.digits), rend(other.digits), greater<int>());
+        for (int i = 39; i >= 0; --i)
+            if (digits[i] != other.digits[i])
+                return digits[i] > other.digits[i];
+        return false;
     }
     bool isLessThan(const HugeInteger& other) const { return !isGreaterThan(other) && !isEqualTo(other); }
     bool isGreaterThanOrEqualTo(const HugeInteger& other) const { return isGreaterThan(other) || isEqualTo(other); }
@@ -72,37 +83,57 @@ public:
         return all_of(begin(digits), end(digits), [](const int a) { return !a; });
     }
     HugeInteger multiply(const HugeInteger& other) const {
-        HugeInteger res;
+        HugeInteger product;
+        int         carry = 0;
+        int         digit;
         for (int i = 0; i < 40; i++) {
+            carry = 0;
             for (int j = 0; j < 40; j++) {
-                int k    = i + j;
-                int prod = digits[i] * other.digits[j];
-                while (prod > 0) {
-                    prod += res.digits[k];
-                    res.digits[k] = prod % 10;
-                    prod /= 10;
-                    k++;
+                if (i + j >= 40) {
+                    break;
                 }
+                digit                 = product.digits[i + j] + digits[i] * other.digits[j] + carry;
+                carry                 = digit / 10;
+                product.digits[i + j] = digit % 10;
             }
         }
-        return res;
+        return product;
     }
     HugeInteger divide(const HugeInteger& other) const {
-        if (other.isZero())
-            throw invalid_argument("divided zero");
-        HugeInteger res;
+        HugeInteger quotient;
         HugeInteger remainder = *this;
-        for (int i = 39; i >= 0; i--) {
-            int quotient = 0;
-            while (remainder.isGreaterThanOrEqualTo(other)) {
-                remainder = remainder.subtract(other);
-                quotient++;
-            }
-            res.digits[i]       = quotient;
-            remainder           = remainder.multiply(HugeInteger("10"));
-            remainder.digits[0] = digits[i];
+        static auto getLength = [](const HugeInteger& integer) {
+            for (int i = 39; i >= 0; --i)
+                if (integer.digits[i])
+                    return i + 1;
+            return 0;
+        };
+        int num_digits = getLength(remainder);
+        int div_digits = getLength(other);
+        if (other.isEqualTo(0)) {
+            throw std::invalid_argument("division by zero");
         }
-        return res;
+        if (isLessThan(other)) {
+            return quotient;
+        }
+        HugeInteger dividend;
+        for (int i = num_digits - 1; i >= 0; i--) {
+            dividend = dividend.multiply(HugeInteger(10)).add(HugeInteger(remainder.digits[i]));
+            if (dividend.isLessThan(other)) {
+                quotient.digits[i] = 0;
+            }
+            else {
+                int         digit    = 0;
+                HugeInteger multiple = other;
+                while (dividend.isGreaterThanOrEqualTo(multiple)) {
+                    multiple = multiple.add(other);
+                    digit++;
+                }
+                quotient.digits[i] = digit;
+                dividend           = dividend.subtract(multiple.subtract(other));
+            }
+        }
+        return quotient;
     }
     HugeInteger modulus(const HugeInteger& other) const {
         if (other.isZero())
