@@ -1,15 +1,13 @@
 #! /bin/bash
 
-install=true
 install_xv6() {
-    rm -rf src .backup
+    rm -rf src backup.tgz
     git clone https://github.com/mit-pdos/xv6-public.git
     if [ $? == 0 ]; then
         mv xv6-public src
-        mkdir .backup
-        cp -r src/* .backup
+        tar -czf backup.tgz src
         cd ./src
-        make && make qemu
+        make
     fi
 }
 check_xv6(){
@@ -25,55 +23,61 @@ chmod_sh() {
         echo "未在父目录找到tester目录或未置于'Xv6-Syscall/'目录下"
         exit 1
     fi
+    exit 0;
+}
+version_ctrl() {
+    check_xv6;
+    if [ -z "$2" ]; then
+        dir="backup.tgz"
+    else
+        dir="$2"
+    fi
+    if [ "$1" = "backup" ]; then
+        tar -czf $dir src
+    elif [ "$1" = "recover" ]; then
+        if ! [ -f "$dir" ]; then
+            echo "没有找到备份文件"
+            exit 1;
+        else
+            rm -rf src/*
+            tar -xzf $dir
+        fi
+    else
+        echo "错误的version_ctrl参数"
+        exit 1
+    fi
+    exit 0
 }
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --no-install | -ni) 
-            install=false ;;
         --chmod-all | -c)
-            chmod_sh;
-            exit 0;;
+            chmod_sh;;
         --recover | -rc)
-            check_xv6;
-            if ! [ -d .backup ]; then
-                echo "没有备份目录"
-                exit 1;
-            else
-                rm -rf src/*
-                cp -r .backup/* src
-                exit 0;
-            fi
-            ;;
+            version_ctrl recover $2;;
         --backup | -b)
-            check_xv6;
-            if ! [ -d .backup ]; then
-                mkdir .backup;
-            else
-                rm -rf .bakcup/*
-            fi
-            cp -r src/* .backup
-            exit 0;
-            ;;
-        --reset | -rs) 
-            check_xv6;
-            install=false ;;
-        --help | -h) echo "使用方法：
+            version_ctrl backup $2;;
+        --reset | -rs | --no-package | -np)
+            install_xv6;
+            exit 0 ;;
+        --help | -h) echo "
+    快捷地操纵环境。如果没有任何参数，将安装软件包和xv6并运行
+    使用方法：
+    setting.sh [options][-b|-rc backup]
+    options:
     -rs, --reset           重新安装xv6
-    -rc, --recover         使用备份覆盖当前xv6
-    -b, --backup           备份当前xv6
+    -rc, --recover         从参数中恢复xv6，默认为.backup
+    -b, --backup           备份当前xv6至backuo参数，默认为.backup
     -c, --chmod-all        赋予所有*.sh和*.exp权限
-    -ni, --no-install      不安装软件包，只安装xv6
+    -np, --no-package      不安装软件包，只安装xv6
     -h, --help             显示帮助信息";
             exit 0;;
         *) echo "未知选项: $1" >&2; exit 1 ;;
     esac
     shift
 done
-if $install; then
-    sudo apt install qemu git build-essential tcl tk expect
-    if [ $? == 0 ]; then
-        install_xv6
-    fi
-else
+sudo apt install qemu git build-essential tcl tk expect
+if [ $? == 0 ]; then
     install_xv6
+    make qemu
 fi
+
