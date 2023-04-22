@@ -1,6 +1,7 @@
 *.zip
 凸优化/*.docx
 机器学习/作业/*.docx
+实验报告.docx
 数据结构/**/*.zip
 .clang-format
 *.exe
