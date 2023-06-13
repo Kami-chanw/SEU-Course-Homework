@@ -6,5 +6,6 @@
 .clang-format
 *.exe
 程序设计/**/*.doc
+模式识别/**/*.docx
 **/.vscode/*
 *.tmp
