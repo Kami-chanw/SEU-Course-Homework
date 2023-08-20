@@ -1,3 +1,6 @@
 [submodule "信号与系统"]
 	path = 信号与系统
 	url = git@github.com:JinBridger/SEU-Signal-And-System-Labwork.git
+[submodule "操作系统"]
+	path = 操作系统
+	url = git@github.com:JinBridger/SEU-Operating-System-Labwork.git
