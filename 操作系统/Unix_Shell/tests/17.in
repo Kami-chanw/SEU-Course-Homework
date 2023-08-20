@@ -1,3 +1,0 @@
-path tests
-p1.sh & p2.sh &
-exit
