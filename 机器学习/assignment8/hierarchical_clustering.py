@@ -1,5 +1,6 @@
 ﻿import numpy as np
 from scipy.cluster.hierarchy import dendrogram, linkage
+import scipy.spatial.distance as ssd
 import matplotlib.pyplot as plt
 
 distances = np.array([[0, 12, 6, 2, 3, 1],
@@ -8,7 +9,7 @@ distances = np.array([[0, 12, 6, 2, 3, 1],
                       [2, 7, 9, 0, 7, 6],
                       [3, 6, 2, 7, 0, 2],
                       [1, 8, 20, 6, 2, 0]])
-
+distances = ssd.squareform(distances)
 Z = linkage(distances, method='average')
 
 plt.figure(figsize=(10, 5))
