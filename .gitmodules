@@ -1,0 +1,12 @@
+[submodule "信号与系统"]
+	path = 信号与系统
+	url = git@github.com:JinBridger/SEU-Signal-And-System-Labwork.git
+[submodule "操作系统"]
+	path = 操作系统
+	url = git@github.com:JinBridger/SEU-Operating-System-Labwork.git
+[submodule "算法设计与分析/OJ题解代码"]
+	path = 算法设计与分析/OJ题解代码
+	url = git@github.com:mollnn/47.99.179.148.git
+[submodule "算法设计与分析/OJ-1048-题解"]
+	path = 算法设计与分析/OJ-1048-题解
+	url = git@github.com:JinBridger/SEU-1048-MapDiscovery.git
