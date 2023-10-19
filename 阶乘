@@ -1,0 +1,34 @@
+#include<iostream>
+using namespace std;
+
+int main() {
+
+	int n = 0;
+	int counter = 1;
+	int N=1;
+	cin >> n;
+	if (n > 0)
+	{
+		while (counter < n + 1)
+		{
+			N = N * counter;
+			counter++;
+
+		}
+		cout << N << endl;
+	}
+	else cout << "please check your input" << endl;
+	
+
+	
+	
+
+
+
+
+
+
+
+
+	return 0;
+}
