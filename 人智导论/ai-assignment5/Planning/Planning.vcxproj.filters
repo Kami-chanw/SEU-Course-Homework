@@ -1,0 +1,195 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="源文件\MFC">
+      <UniqueIdentifier>{6092a2a3-3d38-434f-8d4e-d37d6774e60c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\应用程序">
+      <UniqueIdentifier>{aeb2cd77-cf1c-4a9c-80a3-fa52e610f3eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\主对话框">
+      <UniqueIdentifier>{262a5a29-7c67-47e4-9b75-3afbe273bc32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\XML">
+      <UniqueIdentifier>{7558f65c-9557-4423-ac85-9189497b253f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法">
+      <UniqueIdentifier>{dd282310-3878-44fa-b4d3-c213d3956449}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\辅助函数">
+      <UniqueIdentifier>{0192dc32-080d-44e0-94e6-256f6a9d5a15}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\辅助类型">
+      <UniqueIdentifier>{8476caa1-bf49-49d7-9897-0fb6b014eb5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法\01 初始化">
+      <UniqueIdentifier>{e8af5599-9781-4067-b6ac-76ccf5853fb7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法\02 运行">
+      <UniqueIdentifier>{cec616d7-bec5-4caa-8874-7c6ab4dcea1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法\03 输出">
+      <UniqueIdentifier>{e8b20d8c-9ca3-4046-89fe-a1b3895185f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法\02 运行\01 运行-前向搜索">
+      <UniqueIdentifier>{c3b1a694-a17b-4e55-a03b-58d77fed6e5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法\02 运行\03 运行-辅助函数">
+      <UniqueIdentifier>{807d7804-2037-4699-abe3-4419aad2d051}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\基于搜索的方法\02 运行\02 运行-后向搜索">
+      <UniqueIdentifier>{a7fad1c6-4668-49ce-8cc7-0ce37d9bcc91}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>源文件\MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PlanningDlg.h">
+      <Filter>源文件\主对话框</Filter>
+    </ClInclude>
+    <ClInclude Include="tinystr.h">
+      <Filter>源文件\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml.h">
+      <Filter>源文件\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="tinyxml2.h">
+      <Filter>源文件\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="CSearchPlan.h">
+      <Filter>源文件\基于搜索的方法</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper.h">
+      <Filter>源文件\辅助函数</Filter>
+    </ClInclude>
+    <ClInclude Include="Helper_Type.h">
+      <Filter>源文件\辅助类型</Filter>
+    </ClInclude>
+    <ClInclude Include="Planning.h">
+      <Filter>源文件\应用程序</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件\MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="Planning.cpp">
+      <Filter>源文件\应用程序</Filter>
+    </ClCompile>
+    <ClCompile Include="PlanningDlg.cpp">
+      <Filter>源文件\主对话框</Filter>
+    </ClCompile>
+    <ClCompile Include="PlanningDlg_User.cpp">
+      <Filter>源文件\主对话框</Filter>
+    </ClCompile>
+    <ClCompile Include="tinystr.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxml2.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlerror.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="tinyxmlparser.cpp">
+      <Filter>源文件\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan.cpp">
+      <Filter>源文件\基于搜索的方法</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Init.cpp">
+      <Filter>源文件\基于搜索的方法\01 初始化</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Read_Task.cpp">
+      <Filter>源文件\基于搜索的方法\01 初始化</Filter>
+    </ClCompile>
+    <ClCompile Include="Helper.cpp">
+      <Filter>源文件\辅助函数</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Read_Task_Action.cpp">
+      <Filter>源文件\基于搜索的方法\01 初始化</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Read_Task_Literal.cpp">
+      <Filter>源文件\基于搜索的方法\01 初始化</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_RunForward.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\01 运行-前向搜索</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_RunBackward.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\02 运行-后向搜索</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Expand_Reverse.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\02 运行-后向搜索</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_IsStateEqual.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\03 运行-辅助函数</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_IsStateSmall.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\03 运行-辅助函数</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_IsLiteralContained.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\03 运行-辅助函数</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_OutputToXML.cpp">
+      <Filter>源文件\基于搜索的方法\03 输出</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_GetStateIndex.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\03 运行-辅助函数</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_IsInOPEN.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\03 运行-辅助函数</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Expand.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\01 运行-前向搜索</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_BackTrack.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\01 运行-前向搜索</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_Backtrack_Reverse.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\02 运行-后向搜索</Filter>
+    </ClCompile>
+    <ClCompile Include="CSearchPlan_IsLiteralInVector.cpp">
+      <Filter>源文件\基于搜索的方法\02 运行\03 运行-辅助函数</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Planning.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Planning.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Planning.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
