@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="GBK" ?>
-<Plan>
-    <Action NAME="LeftSock" />
-    <Action NAME="LeftShoe" />
-    <Action NAME="RightSock" />
-    <Action NAME="RightShoe" />
-</Plan>
