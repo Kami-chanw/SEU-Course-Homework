@@ -10,3 +10,6 @@
 [submodule "算法设计与分析/OJ-1048-题解"]
 	path = 算法设计与分析/OJ-1048-题解
 	url = git@github.com:JinBridger/SEU-1048-MapDiscovery.git
+[submodule "专业技能实训-OpenCV"]
+	path = 专业技能实训-OpenCV
+	url = https://github.com/Kami-chanw/cv-tools.git

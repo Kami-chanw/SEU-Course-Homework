@@ -1,78 +1,78 @@
 #include "Heuristic.h"
 /*
-	±ãÓÚ¼ÆËãÂí¹þ¶Ù¾àÀë£¬µÃµ½¸ø¶¨ÊýÂëÓ¦ÔÚµÄÎ»ÖÃ¡£
-	@grideSize: ÊýÂëÎÊÌâµÄ´óÐ¡£¬8ÊýÂëÎÊÌâÓ¦¸Ã°üÀ¨0-8£¬ËùÒÔsizeÎª9
-	@value: ÊýÂëµÄÖµ
+    ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¾ï¿½ï¿½ë£¬ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Úµï¿½Î»ï¿½Ã¡ï¿½
+    @grideSize: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ð¡ï¿½ï¿½8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã°ï¿½ï¿½ï¿½0-8ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sizeÎª9
+    @value: ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 
-	ÑùÀý£º
-	0 1 2
-	3 4 5
-	6 7 8
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    0 1 2
+    3 4 5
+    6 7 8
 
-	Position position = getPosition(9, 5);	// ÊýÂëÖµ5Ó¦¸ÃÔÚµÄÎ»ÖÃ
-	positionµÄÖµÓ¦¸ÃÎª(1, 2)£¬Ò²¾ÍÊÇ5Ó¦¸ÃÔÚµÚ2ÐÐµÚ3ÁÐ
+    Position position = getPosition(9, 5);	// ï¿½ï¿½ï¿½ï¿½Öµ5Ó¦ï¿½ï¿½ï¿½Úµï¿½Î»ï¿½ï¿½
+    positionï¿½ï¿½ÖµÓ¦ï¿½ï¿½Îª(1, 2)ï¿½ï¿½Ò²ï¿½ï¿½ï¿½ï¿½5Ó¦ï¿½ï¿½ï¿½Úµï¿½2ï¿½Ðµï¿½3ï¿½ï¿½
 */
-heuristic::Position heuristic::getPosition(int gridSize, int value)
-{
-	int width = (int)sqrt(gridSize);
-	return { value / width , value % width };
+heuristic::Position heuristic::getPosition(int gridSize, int value) {
+    int width = (int)sqrt(gridSize);
+    return { value / width, value % width };
 }
 
-int heuristic::misplace(std::vector<int>& state, std::vector<int>& goalState)
-{
-	/*
-		h1 = the number of misplaced tiles.
-		Example:
-		Goal:
-		0 1 2
-		3 4 5
-		6 7 8
-		Current:
-		7 2 4
-		5 0 6
-		8 3 1
+int heuristic::misplace(std::vector<int>& state, std::vector<int>& goalState) {
+    /*
+        h1 = the number of misplaced tiles.
+        Example:
+        Goal:
+        0 1 2
+        3 4 5
+        6 7 8
+        Current:
+        7 2 4
+        5 0 6
+        8 3 1
 
-		All of the eight tiles are out of position, so the start state would have h1 = 8.
-		h1 is an admissible heuristic because it is clear that any tile that is out of place must be moved at least once.
+        All of the eight tiles are out of position, so the start state would have h1 = 8.
+        h1 is an admissible heuristic because it is clear that any tile that is out of place must be
+       moved at least once.
 
-		Reference:
-		3.6 HEURISTIC FUNCTIONS
-	*/
+        Reference:
+        3.6 HEURISTIC FUNCTIONS
+    */
 
-	int h1 = 0;
-	for (int i = 0; i < state.size(); ++i)
-		if (state[i] && state[i] != goalState[i])
-			++h1;
-	return h1;
+    int h1 = 0;
+    for (int i = 0; i < state.size(); ++i)
+        if (state[i] && state[i] != goalState[i])
+            ++h1;
+    return h1;
 }
 
-int heuristic::manhattan(std::vector<int>& state, std::vector<int>& goalState)
-{
-	/*
-		h2 = the sum of the distances of the tiles from their goal positions.
-		Example:
-		Goal:
-		0 1 2
-		3 4 5
-		6 7 8
-		Current:
-		7 2 4
-		5 0 6
-		8 3 1
+int heuristic::manhattan(std::vector<int>& state, std::vector<int>& goalState) {
+    /*
+        h2 = the sum of the distances of the tiles from their goal positions.
+        Example:
+        Goal:
+        0 1 2
+        3 4 5
+        6 7 8
+        Current:
+        7 2 4
+        5 0 6
+        8 3 1
 
-		Because tiles cannot move along diagonals, the distance we will count is the sum of the horizontal
-		and vertical distances. This is sometimes called the city block distance or Manhattan distance.
-		h2 is also admissible because all any move can do is move one tile one step closer to the goal.
-		Tiles 1 to 8 in the start state give a Manhattan distance of h2 = 3+1 + 2 + 2+ 2 + 3+ 3 + 2 = 18.
+        Because tiles cannot move along diagonals, the distance we will count is the sum of the
+       horizontal and vertical distances. This is sometimes called the city block distance or
+       Manhattan distance. h2 is also admissible because all any move can do is move one tile one
+       step closer to the goal. Tiles 1 to 8 in the start state give a Manhattan distance of h2 =
+       3+1 + 2 + 2+ 2 + 3+ 3 + 2 = 18.
 
-		Reference:
-		3.6 HEURISTIC FUNCTIONS
-	*/
-	int h2 = 0;
-	for (int i = 0; i < state.size(); ++i)
-		if (state[i]) {
-			auto [x, y] = getPosition(state.size(), state[i]);
-			h2 += x + y;
-		}
-	return h2;
+        Reference:
+        3.6 HEURISTIC FUNCTIONS
+    */
+    int h2 = 0, problemSize = std::sqrt(state.size());
+    for (int i = 0; i < state.size(); ++i)
+        if (state[i]) {
+            auto [x, y] = getPosition(state.size(), state[i]);
+            h2 += std::abs(x - i / problemSize) + std::abs(y - i % problemSize);
+        }
+
+    return h2;
 }
