@@ -16,3 +16,6 @@
 [submodule "专业技能实训-VCampus"]
 	path = 专业技能实训-VCampus
 	url = git@github.com:JinBridger/SEU-SummerSchool-VCampus.git
+[submodule "数据结构/王伟"]
+	path = 数据结构/王伟
+	url = git@github.com:JinBridger/SEU-DataStructure-CourseLab.git
