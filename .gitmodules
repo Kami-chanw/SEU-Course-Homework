@@ -13,3 +13,6 @@
 [submodule "专业技能实训-OpenCV"]
 	path = 专业技能实训-OpenCV
 	url = https://github.com/Kami-chanw/cv-tools.git
+[submodule "专业技能实训-VCampus"]
+	path = 专业技能实训-VCampus
+	url = git@github.com:JinBridger/SEU-SummerSchool-VCampus.git
