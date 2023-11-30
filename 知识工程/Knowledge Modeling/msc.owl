@@ -1,0 +1,438 @@
+@prefix : <http://www.semanticweb.org/kamichanw/ontologies/msc/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://www.semanticweb.org/kamichanw/ontologies/msc/> .
+
+<http://www.semanticweb.org/kamichanw/ontologies/msc> rdf:type owl:Ontology .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled
+<http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc#canDiscard
+:canDiscard rdf:type owl:ObjectProperty ;
+            rdfs:domain :Person ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :own ;
+                          owl:allValuesFrom :Item
+                        ] ;
+            rdfs:range :Item .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc#isOwnedBy
+:isOwnedBy rdf:type owl:ObjectProperty ;
+           owl:inverseOf :own ;
+           rdfs:domain :Item ;
+           rdfs:range :Person .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/canManage
+:canManage rdf:type owl:ObjectProperty ;
+           rdfs:domain :Person ;
+           rdfs:range [ rdf:type owl:Class ;
+                        owl:unionOf ( :Item
+                                      :Person
+                                    )
+                      ] .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/canUse
+:canUse rdf:type owl:ObjectProperty ;
+        rdfs:domain :Person ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :majorIn ;
+                      owl:someValuesFrom :Major
+                    ] ;
+        rdfs:range :Item .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/majorIn
+:majorIn rdf:type owl:ObjectProperty ;
+         rdfs:domain :Person ;
+         rdfs:range :Major .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/own
+:own rdf:type owl:ObjectProperty ;
+     rdfs:domain :Person ;
+     rdfs:range :Item .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/classOf
+:classOf rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Person .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc#PrivateMoniter
+:PrivateMoniter rdf:type owl:Class ;
+                rdfs:subClassOf :Moniter .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc#PublicMoniter
+:PublicMoniter rdf:type owl:Class ;
+               rdfs:subClassOf :Moniter .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Chair
+:Chair rdf:type owl:Class ;
+       rdfs:subClassOf :Item .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Chief
+:Chief rdf:type owl:Class ;
+       rdfs:subClassOf :Person .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Desk
+:Desk rdf:type owl:Class ;
+      rdfs:subClassOf :Item .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Item
+:Item rdf:type owl:Class .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Major
+:Major rdf:type owl:Class ;
+       owl:equivalentClass [ rdf:type owl:Class ;
+                             owl:oneOf ( :AI
+                                         :Computer_Science
+                                         :Network_Security
+                                         :Software_Engineering
+                                       )
+                           ] .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Manager
+:Manager rdf:type owl:Class ;
+         rdfs:subClassOf :Person .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Member
+:Member rdf:type owl:Class ;
+        rdfs:subClassOf :Person .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Moniter
+:Moniter rdf:type owl:Class ;
+         rdfs:subClassOf :Item .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Person
+:Person rdf:type owl:Class .
+
+
+#################################################################
+#    Individuals
+#################################################################
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc#Jin's_Moniter
+<http://www.semanticweb.org/kamichanw/ontologies/msc#Jin's_Moniter> rdf:type owl:NamedIndividual ,
+                                                                             :PrivateMoniter .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc#Yue's_Moniter
+<http://www.semanticweb.org/kamichanw/ontologies/msc#Yue's_Moniter> rdf:type owl:NamedIndividual ,
+                                                                             :PrivateMoniter ;
+                                                                    :isOwnedBy :Yue_Shuaigangran .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/AI
+:AI rdf:type owl:NamedIndividual ,
+             :Major .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Chair1
+:Chair1 rdf:type owl:NamedIndividual ,
+                 :Chair .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Chair2
+:Chair2 rdf:type owl:NamedIndividual ,
+                 :Chair .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Chair3
+:Chair3 rdf:type owl:NamedIndividual ,
+                 :Chair .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Computer_Science
+:Computer_Science rdf:type owl:NamedIndividual ,
+                           :Major .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Desk1
+:Desk1 rdf:type owl:NamedIndividual ,
+                :Desk .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Desk2
+:Desk2 rdf:type owl:NamedIndividual ,
+                :Desk .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Jiang_Yuchu
+:Jiang_Yuchu rdf:type owl:NamedIndividual ,
+                      :Member ;
+             :majorIn :AI ;
+             :classOf "2025"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Jin_Bridger
+:Jin_Bridger rdf:type owl:NamedIndividual ,
+                      :Chief ;
+             :majorIn :Computer_Science ;
+             :own <http://www.semanticweb.org/kamichanw/ontologies/msc#Jin's_Moniter> ;
+             :classOf "2025"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Liu_Youyuan
+:Liu_Youyuan rdf:type owl:NamedIndividual ,
+                      :Manager ;
+             :majorIn :AI ;
+             :classOf "2023"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Ma_Haoxuan
+:Ma_Haoxuan rdf:type owl:NamedIndividual ,
+                     :Member ;
+            :majorIn :AI ;
+            :classOf "2025"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Ma_Xiaolong
+:Ma_Xiaolong rdf:type owl:NamedIndividual ,
+                      :Manager ;
+             :majorIn :Computer_Science ;
+             :classOf "2025"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Moniter1
+:Moniter1 rdf:type owl:NamedIndividual ,
+                   :PublicMoniter .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Moniter2
+:Moniter2 rdf:type owl:NamedIndividual ,
+                   :PublicMoniter .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Network_Security
+:Network_Security rdf:type owl:NamedIndividual ,
+                           :Major .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Software_Engineering
+:Software_Engineering rdf:type owl:NamedIndividual ,
+                               :Major .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Wang_wenwen
+:Wang_wenwen rdf:type owl:NamedIndividual ,
+                      :Chief ;
+             :majorIn :AI ;
+             :classOf "2024"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Yue_Shuaigangran
+:Yue_Shuaigangran rdf:type owl:NamedIndividual ,
+                           :Manager ;
+                  :majorIn :Network_Security ;
+                  :own <http://www.semanticweb.org/kamichanw/ontologies/msc#Yue's_Moniter> ;
+                  :classOf "2025"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Zhang_Jianle
+:Zhang_Jianle rdf:type owl:NamedIndividual ,
+                       :Member ;
+              :majorIn :AI ;
+              :classOf "2025"^^xsd:short .
+
+
+###  http://www.semanticweb.org/kamichanw/ontologies/msc/Jiang's_Chair
+<http://www.semanticweb.org/kamichanw/ontologies/msc/Jiang's_Chair> rdf:type owl:NamedIndividual ,
+                                                                             :Chair ;
+                                                                    :isOwnedBy :Jiang_Yuchu .
+
+
+#################################################################
+#    Rules
+#################################################################
+
+:y rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:z rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:x rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:a rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "General Item Usage" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Chair ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :y
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#classPredicate> :Desk ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :z
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#classPredicate> :Person ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :x
+                                                                           ] ;
+                                                                 rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                            rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                                        <http://www.w3.org/2003/11/swrl#classPredicate> :PublicMoniter ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument1> :a
+                                                                                      ] ;
+                                                                            rdf:rest rdf:nil
+                                                                          ]
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#propertyPredicate> :canUse ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                       <http://www.w3.org/2003/11/swrl#argument2> :y
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :canUse ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :z
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :canUse ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :a
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Member Management" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Chief ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :x
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#classPredicate> :Manager ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :y
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#classPredicate> :Member ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :z
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#propertyPredicate> :canManage ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                       <http://www.w3.org/2003/11/swrl#argument2> :y
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :canManage ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :z
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :canManage ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :y ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :z
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "" ;
+   rdfs:label "Private Item Usage" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Person ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :x
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#classPredicate> :Item ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :y
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :own ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :y
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#propertyPredicate> :canManage ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                       <http://www.w3.org/2003/11/swrl#argument2> :y
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :canUse ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :y
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :canDiscard ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :x ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :y
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ]
+ ] .
+
+###  Generated by the OWL API (version 4.5.26.2023-07-17T20:34:13Z) https://github.com/owlcs/owlapi
