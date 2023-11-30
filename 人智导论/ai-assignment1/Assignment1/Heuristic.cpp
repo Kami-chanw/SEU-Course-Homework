@@ -1,16 +1,16 @@
 #include "Heuristic.h"
 /*
-    ���ڼ��������پ��룬�õ���������Ӧ�ڵ�λ�á�
-    @grideSize: ��������Ĵ�С��8��������Ӧ�ð���0-8������sizeΪ9
-    @value: �����ֵ
+	便于计算马哈顿距离，得到给定数码应在的位置。
+	@grideSize: 数码问题的大小，8数码问题应该包括0-8，所以size为9
+	@value: 数码的值
 
-    ������
-    0 1 2
-    3 4 5
-    6 7 8
+	样例：
+	0 1 2
+	3 4 5
+	6 7 8
 
-    Position position = getPosition(9, 5);	// ����ֵ5Ӧ���ڵ�λ��
-    position��ֵӦ��Ϊ(1, 2)��Ҳ����5Ӧ���ڵ�2�е�3��
+	Position position = getPosition(9, 5);	// 数码值5应该在的位置
+	position的值应该为(1, 2)，也就是5应该在第2行第3列
 */
 heuristic::Position heuristic::getPosition(int gridSize, int value) {
     int width = (int)sqrt(gridSize);
