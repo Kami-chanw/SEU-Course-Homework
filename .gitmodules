@@ -22,3 +22,6 @@
 [submodule "编译原理/张志政"]
 	path = 编译原理/张志政
 	url = git@github.com:JinBridger/SEU-Compiler-Labwork.git
+[submodule "数字图像处理/陈阳"]
+	path = 数字图像处理/陈阳
+	url = git@github.com:JinBridger/SEU-DIP-Labwork.git
