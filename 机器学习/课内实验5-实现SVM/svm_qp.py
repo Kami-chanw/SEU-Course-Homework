@@ -116,21 +116,6 @@ class SVM:
     def predict(self, X):
         return np.sign(np.dot(X, self.w) + self.b)
 
-# # Example usage
-# X = np.array([[2, 3], [3, 3], [4, 3], [1, 1], [2, 1], [3, 1]])
-# y = np.array([1, 1, 1, -1, -1, -1])
-
-# svm = SVM(C=1.0)
-# svm.fit(X, y)
-# predictions = svm.predict(X)
-# print("Predictions:", predictions)
-
-
-# # Assuming X_test is your test data
-# X_test = np.array([[2, 2], [3, 2], [4, 2], [1, 0], [2, 0], [3, 0]])
-# predictions = svm.predict(X_test)
-# print("Test Predictions:", predictions)
-
 X_train = pd.read_csv('breast_cancer_Xtrain.csv', header=0).values
 X_test = pd.read_csv('breast_cancer_Xtest.csv', header=0).values
 
