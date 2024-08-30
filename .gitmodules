@@ -34,3 +34,6 @@
 [submodule "程序设计/cpp_2019"]
 	path = 程序设计/cpp_2019
 	url = https://github.com/16131zzzzzzzz/Homework202001.git
+[submodule "程序设计/cpp_final_design"]
+	path = 程序设计/cpp_final_design
+	url = https://github.com/16131zzzzzzzz/Uno_Game.git
