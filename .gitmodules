@@ -28,3 +28,6 @@
 [submodule "机器学习专题实践/GBDT_SPARSE"]
 	path = 机器学习专题实践/GBDT_SPARSE
 	url = https://github.com/16131zzzzzzzz/GBDT_SPARSE.git
+[submodule "模式识别/PR_Lab_2021"]
+	path = 模式识别/PR_Lab_2021
+	url = https://github.com/16131zzzzzzzz/PR_Lab.git
