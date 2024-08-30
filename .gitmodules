@@ -25,15 +25,3 @@
 [submodule "数字图像处理/陈阳"]
 	path = 数字图像处理/陈阳
 	url = git@github.com:JinBridger/SEU-DIP-Labwork.git
-[submodule "机器学习专题实践/GBDT_SPARSE"]
-	path = 机器学习专题实践/GBDT_SPARSE
-	url = https://github.com/16131zzzzzzzz/GBDT_SPARSE.git
-[submodule "模式识别/PR_Lab_2021"]
-	path = 模式识别/PR_Lab_2021
-	url = https://github.com/16131zzzzzzzz/PR_Lab.git
-[submodule "程序设计/cpp_2019"]
-	path = 程序设计/cpp_2019
-	url = https://github.com/16131zzzzzzzz/Homework202001.git
-[submodule "程序设计/cpp_final_design"]
-	path = 程序设计/cpp_final_design
-	url = https://github.com/16131zzzzzzzz/Uno_Game.git
