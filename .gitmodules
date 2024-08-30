@@ -25,3 +25,6 @@
 [submodule "数字图像处理/陈阳"]
 	path = 数字图像处理/陈阳
 	url = git@github.com:JinBridger/SEU-DIP-Labwork.git
+[submodule "机器学习专题实践/GBDT_SPARSE"]
+	path = 机器学习专题实践/GBDT_SPARSE
+	url = https://github.com/16131zzzzzzzz/GBDT_SPARSE.git
